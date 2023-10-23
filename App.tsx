@@ -142,7 +142,6 @@ export default function App() {
             <DateTimePicker value={toDateObj} onChange={handleChangeToDate} />
           </Row>
           <Row>
-            dwe
             <RadioGroup
               radioButtons={BUCKET_TYPES}
               selectedId={bucketType}

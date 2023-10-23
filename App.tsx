@@ -19,21 +19,31 @@ import {
 
 import styled from "styled-components/native";
 import { RadioGroup } from "react-native-radio-buttons-group";
-/*
-curl \
--H "Accept: application/vnd.github.v3+json" \
-https://api.github.com/search/issues\?q\=repo:apple/swift+is:pr+is:merged%20updated:2023-10-05..2023-10-05
-
-*/
 
 /*
+    The histogram function I will use is f(x) = y
+    where x = bucket = moment of time = minimum interval
+    f(x): total pr updated that in that moment of time
+
+    Other examples of histogram would be:
+
+    f(x) = y
+    x: has 1 pr done
+    f(x): how many intervals have that x number of pr 
+    x = 1: one pr made
+    f(1) = 45: in 45 intervals 1 pr were made
+
+
     Because the api limits and truncates the result to elements that fit into 100kb and since I only need the total_count in each request.
     I will do N requests. One request = one bucket (one division of the date range)
     In the base case I will do 12 requests => (product req: "per month for the past 1 year"). Division: month. Range: 1 Year. 12 months in 1 year.
-    Types of buckets: 1d, 1w, 1m, 6m, 1y
+    Types of buckets: 1d, 1w, 1m,
     Other examples: 
     Type of bucket: 1d, Range: 1 Year. Number of buckets (requests): 365.
     Type of bucket: 1w: Range: 1 month. Buckets: 4.
+
+
+    Note: you need a OAuth App Token to avoid rate limiting. If you do not use any kind of token you have 10 requests. With PAT, you have 30 requests.
 */
 
 const Header = styled.View`

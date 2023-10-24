@@ -1,12 +1,13 @@
-import moment from "moment";
+import dayjs from "dayjs";
 import { buildBuckets } from "../src/utils/buckets";
 import { BUCKET_TYPES } from "../src/utils/constants";
 
 import { ONE_YEAR_AGO_1_MONTH } from "./mocks";
+import { getRandomBetweenNumber } from "./utils";
 
 describe("From 24/10/2022 - 24/10/2023. Bucket type: month", () => {
-  let from = moment("2022-10-24");
-  let to = moment("2023-10-24");
+  let from = dayjs("2022-10-24");
+  let to = dayjs("2023-10-24");
 
   let type = BUCKET_TYPES[2].id;
 
@@ -25,11 +26,11 @@ describe("From 24/10/2022 - 24/10/2023. Bucket type: month", () => {
 
   it("should finishes at the last day of the last month/to date.", () => {
     const lastDay = to.daysInMonth();
-    const lastDatDate = moment({
-      year: to.year(),
-      month: to.month(),
-      day: lastDay,
-    }).format("YYYY-MM-DD");
+    const lastDatDate = dayjs()
+      .year(to.year())
+      .month(to.month())
+      .date(lastDay)
+      .format("YYYY-MM-DD");
     const buckets = buildBuckets(from, to, type);
     expect(buckets[buckets.length - 1].to).toBe(lastDatDate);
   });

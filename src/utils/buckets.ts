@@ -108,8 +108,6 @@ export const buildMonthBucketsArray = ({ fromDate, toDate }: DatesData) => {
       )}`,
     });
 
-    console.log("buckets", buckets);
-
     currentMonth += 1;
     if (currentMonth === 12) {
       currentMonth = 0;

@@ -1,18 +1,14 @@
 import moment, { Moment } from "moment";
-import { Bucket, daysInYear, normalizeDate, weeksInYear } from ".";
+import { daysInYear, normalizeDate, weeksInYear } from "./date";
+import { DatesData, Bucket } from "./types";
 
-interface DatesData {
-  fromDate: Moment;
-  toDate: Moment;
-}
 export const buildDayBucketsArray = ({ fromDate, toDate }: DatesData) => {
   const numberOfDays = toDate.diff(fromDate, "days");
 
-  const buckets = [];
-
   let currentYear = fromDate.year();
-
   let currentDay = fromDate.dayOfYear();
+
+  const buckets = [];
 
   for (let index = 0; index <= numberOfDays; index++) {
     const currentDate = moment()
@@ -41,12 +37,11 @@ export const buildWeekBucketsArray = ({ fromDate, toDate }: DatesData) => {
   const toDateWeekStart = toDate.startOf("isoWeek");
 
   const numberOfWeeks = toDateWeekStart.diff(fromDateWeekStart, "weeks");
-  const buckets = [];
 
   let currentYear = fromDate.year();
   let currentWeek = fromDate.week();
 
-  console.log("currentYear", currentYear);
+  const buckets = [];
 
   for (let index = 0; index <= numberOfWeeks; index++) {
     let startOfWeek = moment()
@@ -58,7 +53,6 @@ export const buildWeekBucketsArray = ({ fromDate, toDate }: DatesData) => {
       .week(currentWeek)
       .endOf("isoWeek");
 
-    console.log("index", index, startOfWeek);
     buckets.push({
       from: startOfWeek.format("YYYY-MM-DD"),
       to: endOfWeek.format("YYYY-MM-DD"),
@@ -80,10 +74,10 @@ export const buildMonthBucketsArray = ({ fromDate, toDate }: DatesData) => {
 
   const numberOfMonths = toDateMonthStart.diff(fromDateMonthStart, "months");
 
-  const buckets = [];
-
   let currentYear = fromDate.year();
   let currentMonth = fromDate.month();
+
+  const buckets = [];
 
   for (let index = 0; index <= numberOfMonths; index++) {
     const daysOfMonth = moment({
@@ -110,16 +104,25 @@ export const buildMonthBucketsArray = ({ fromDate, toDate }: DatesData) => {
   return buckets;
 };
 
-export const buildBucketsArray = (
-  datesData: DatesData,
-  bucketType: number
+export const buildRangeBuckets = (
+  fromDate: Moment,
+  toDate: Moment,
+  bucketType: string
 ): Bucket[] => {
-  if (bucketType === 1) {
+  const datesData = { fromDate: moment(fromDate), toDate: moment(toDate) };
+  if (bucketType === "1") {
     return buildDayBucketsArray(datesData);
-  } else if (bucketType === 2) {
+  } else if (bucketType === "2") {
     return buildWeekBucketsArray(datesData);
-  } else if (bucketType === 3) {
+  } else if (bucketType === "3") {
     return buildMonthBucketsArray(datesData);
   }
   return [] as Bucket[];
+};
+
+export const buildBucketLabel = (date: string, bucketType: string) => {
+  if (bucketType === "1") return date;
+  if (bucketType === "2") return moment(date, "YYYY-MM-DD").week().toString();
+  if (bucketType === "3") return moment(date, "YYYY-MM-DD").format("MMM");
+  return "";
 };

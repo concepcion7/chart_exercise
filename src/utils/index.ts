@@ -1,15 +1,11 @@
+import moment from "moment";
+import { buildBucketsArray } from "./buildBuckets";
+
 const GITHUB_TOKEN =
   "Bearer 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";
 
 export const normalizeDate = (date: string | number) =>
   date.toString().padStart(2, "0");
-
-export const formatDate = (date: Date): string => {
-  const day = normalizeDate(date.getDate());
-  const month = normalizeDate(date.getMonth() + 1);
-  const year = date.getFullYear();
-  return `${year}-${month}-${day}`;
-};
 
 export interface Bucket {
   from: string;
@@ -18,16 +14,16 @@ export interface Bucket {
   //   year?: number;
 }
 
-export interface BucketData extends Bucket {
-  total: number;
+export interface BucketData {
+  value: number;
   label: string;
 }
 
-const getDayOfYear = (date) =>
-  Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
-
-const daysInYear = (year) =>
+export const daysInYear = (year: number) =>
   (year % 4 === 0 && year % 100 > 0) || year % 400 == 0 ? 366 : 365;
+
+export const weeksInYear = (year: number) =>
+  moment().year(year).isoWeeksInYear();
 
 export const buildRangeBuckets = (
   from: string,
@@ -37,77 +33,24 @@ export const buildRangeBuckets = (
   const fromDate = new Date(from);
   const toDate = new Date(to);
 
-  const fromDay = fromDate.getDate();
-  const fromDayOfYear = getDayOfYear(fromDate);
-  const fromMonth = fromDate.getMonth();
-  const fromYear = fromDate.getFullYear();
-
-  const toDay = toDate.getDate();
-  const toDayOfYear = getDayOfYear(toDate);
-  const toMonth = toDate.getMonth();
-  const toYear = toDate.getFullYear();
-
-  const buckets = [];
-  const numberOfMonths = toMonth - fromMonth + 12 * (toYear - fromYear);
-
-  const numberOfDays = toDayOfYear - fromDayOfYear + 365 * (toYear - fromYear);
-
-  let currentYear = fromYear;
-  let currentMonth = fromMonth;
-  let currentDay = fromDayOfYear;
-
-  if (bucketType === "1") {
-    for (let index = 0; index <= numberOfDays; index++) {
-      currentDay += 1;
-      if (currentDay === daysInYear(currentYear) + 1) {
-        currentDay = 1;
-        currentYear += 1;
-      }
-
-      const startOfYear = new Date(currentYear, 0);
-      const currentDate = new Date(startOfYear.setDate(currentDay)); // add the number of days
-
-      buckets.push({
-        from: formatDate(currentDate),
-        to: formatDate(currentDate),
-        month: currentMonth,
-      });
-    }
-  } else if (bucketType === "3") {
-    for (let index = 0; index <= numberOfMonths; index++) {
-      currentMonth += 1;
-      if (currentMonth === 13) {
-        currentMonth = 1;
-        currentYear += 1;
-      }
-      const daysOfMonth = new Date(currentYear, currentMonth, 0).getDate();
-
-      // console.log("daysOfMonth", daysOfMonth, currentYear, currentMonth);
-
-      let bucketFromDay = 1;
-      let bucketToDay = daysOfMonth;
-      if (index === 0) {
-        bucketFromDay = fromDay;
-      } else if (index === numberOfMonths) {
-        bucketToDay = toDay;
-      }
-
-      buckets.push({
-        from: `${currentYear}-${normalizeDate(currentMonth)}-${normalizeDate(
-          bucketFromDay
-        )}`,
-        to: `${currentYear}-${normalizeDate(currentMonth)}-${normalizeDate(
-          bucketToDay
-        )}`,
-        month: currentMonth,
-      });
-    }
-  }
-  return buckets;
+  return buildBucketsArray(
+    {
+      fromDate: moment(fromDate),
+      toDate: moment(toDate),
+    },
+    bucketType
+  );
 };
 
 export const buildBucketFetchURL = ({ from, to }: Bucket) =>
   `https://api.github.com/search/issues?q=repo:apple/swift+is:pr+is:merged%20updated:${from}..${to}`;
+
+const buildBucketLabel = (date: string, bucketType: string) => {
+  if (bucketType === "1") return date;
+  if (bucketType === "2") return moment(date, "YYYY-MM-DD").week().toString();
+  if (bucketType === "3") return moment(date, "YYYY-MM-DD").format("mm");
+  return "";
+};
 
 export const fetchBuckets = async (buckets: Bucket[], bucketType: string) => {
   try {
@@ -116,41 +59,33 @@ export const fetchBuckets = async (buckets: Bucket[], bucketType: string) => {
       urls.push(buildBucketFetchURL(bucket));
     }
 
-    console.log("urls", urls);
+    console.log("buckets", buckets);
 
-    const requests = urls.map((url) =>
-      fetch(url, {
-        method: "GET",
-        headers: {
-          Accept: "application/vnd.github.v3+json",
-          Authorization: GITHUB_TOKEN,
-        },
-      })
-    );
-    const responses = await Promise.all(requests);
+    // const requests = urls.map((url) =>
+    //   fetch(url, {
+    //     method: "GET",
+    //     headers: {
+    //       Accept: "application/vnd.github.v3+json",
+    //       Authorization: GITHUB_TOKEN,
+    //     },
+    //   })
+    // );
+    // const responses = await Promise.all(requests);
 
-    const json = responses.map((response) => response.json());
-    const data = await Promise.all(json);
-    console.log("data", data);
-    const bucketsData: BucketData[] = [];
+    // const json = responses.map((response) => response.json());
+    // const data = await Promise.all(json);
+    // console.log("data", data);
+    // const bucketsData: BucketData[] = [];
 
-    let index = 0;
-    for (const element of data) {
-      //   bucketsData[index].from = buckets[index].from;
-      //   bucketsData[index].to = buckets[index].to;
-      bucketsData.push({
-        value: element.total_count || 0,
-        from: buckets[index]?.from,
-        to: buckets[index]?.to,
-        label:
-          bucketType === "1"
-            ? buckets[index]?.from
-            : new Date(buckets[index]?.from).toLocaleString("default", {
-                month: "short",
-              }),
-      });
-      index++;
-    }
+    // let index = 0;
+    // for (const element of data) {
+    //   const fromDate = buckets[index]?.from;
+    //   bucketsData.push({
+    //     value: element.total_count || 0,
+    //     label: buildBucketLabel(fromDate, bucketType),
+    //   });
+    //   index++;
+    // }
     const mock = [
       { from: "2022-10-23", month: 10, to: "2022-10-31", value: 105 },
       { from: "2022-11-01", month: 11, to: "2022-11-30", value: 336 },
@@ -183,9 +118,10 @@ export const fetchBuckets = async (buckets: Bucket[], bucketType: string) => {
       setTimeout(resolve, 1000);
     });
 
-    console.log("bucketsData", bucketsData);
     await sleep;
-    return bucketsData;
+    // console.log("bucketsData", bucketsData);
+
+    // return bucketsData;
     return mock;
   } catch (error) {
     throw error;

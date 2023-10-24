@@ -21,17 +21,11 @@ import styled from "styled-components/native";
 import { RadioGroup } from "react-native-radio-buttons-group";
 
 /*
-    The histogram function I will use is f(x) = y
+    Product req: "per month for the past 1 year"
+    Histogram:
+    f(x) = y
     where x = bucket = moment of time = minimum interval
     f(x): total pr updated that in that moment of time
-
-    Other examples of histogram would be:
-
-    f(x) = y
-    x: has 1 pr done
-    f(x): how many intervals have that x number of pr 
-    x = 1: one pr made
-    f(1) = 45: in 45 intervals 1 pr were made
 
 
     Because the api limits and truncates the result to elements that fit into 100kb and since I only need the total_count in each request.
@@ -56,7 +50,9 @@ const Row = styled.View`
 `;
 
 const TODAY = formatDate(new Date());
-const ONE_YEAR_AGO = formatDate(new Date(Date.now() - 2 * 24 * 60 * 60 * 1000));
+const ONE_YEAR_AGO = formatDate(
+  new Date(Date.now() - 18 * 24 * 60 * 60 * 1000)
+);
 
 const BUCKET_TYPES = [
   {
@@ -79,14 +75,13 @@ const BUCKET_TYPES = [
 export default function App() {
   const [fromDate, setFromDate] = useState(ONE_YEAR_AGO);
   const [toDate, setToDate] = useState(TODAY);
-  const [bucketType, setBucketType] = useState(BUCKET_TYPES[2].id);
+  const [bucketType, setBucketType] = useState(BUCKET_TYPES[1].id);
 
   const [data, setData] = useState<BucketData[] | undefined>(
     [] as BucketData[]
   );
-  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [setError] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {

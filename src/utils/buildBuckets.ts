@@ -37,6 +37,7 @@ export const buildDayBucketsArray = ({ fromDate, toDate }: DatesData) => {
 
 export const buildWeekBucketsArray = ({ fromDate, toDate }: DatesData) => {
   const fromDateWeekStart = fromDate.startOf("isoWeek");
+
   const toDateWeekStart = toDate.startOf("isoWeek");
 
   const numberOfWeeks = toDateWeekStart.diff(fromDateWeekStart, "weeks");
@@ -45,11 +46,17 @@ export const buildWeekBucketsArray = ({ fromDate, toDate }: DatesData) => {
   let currentYear = fromDate.year();
   let currentWeek = fromDate.week();
 
-  console.log("currentWeek", numberOfWeeks);
+  console.log("currentYear", currentYear);
 
   for (let index = 0; index <= numberOfWeeks; index++) {
-    let startOfWeek = moment().week(currentWeek).startOf("isoWeek");
-    let endOfWeek = moment().week(currentWeek).endOf("isoWeek");
+    let startOfWeek = moment()
+      .year(currentYear)
+      .week(currentWeek)
+      .startOf("isoWeek");
+    let endOfWeek = moment()
+      .year(currentYear)
+      .week(currentWeek)
+      .endOf("isoWeek");
 
     console.log("index", index, startOfWeek);
     buckets.push({
@@ -105,12 +112,14 @@ export const buildMonthBucketsArray = ({ fromDate, toDate }: DatesData) => {
 
 export const buildBucketsArray = (
   datesData: DatesData,
-  bucketType: string
+  bucketType: number
 ): Bucket[] => {
-  if (bucketType === "1") {
+  if (bucketType === 1) {
     return buildDayBucketsArray(datesData);
-  } else if (bucketType === "3") {
+  } else if (bucketType === 2) {
+    return buildWeekBucketsArray(datesData);
+  } else if (bucketType === 3) {
     return buildMonthBucketsArray(datesData);
   }
-  return buildWeekBucketsArray(datesData);
+  return [] as Bucket[];
 };

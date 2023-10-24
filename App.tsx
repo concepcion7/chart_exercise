@@ -19,6 +19,7 @@ import {
 
 import styled from "styled-components/native";
 import { RadioGroup } from "react-native-radio-buttons-group";
+import moment, { Moment } from "moment";
 
 /*
     Product req: "per month for the past 1 year"
@@ -49,32 +50,30 @@ const Row = styled.View`
   flex-direction: row;
 `;
 
-const TODAY = formatDate(new Date());
-const ONE_YEAR_AGO = formatDate(
-  new Date(Date.now() - 18 * 24 * 60 * 60 * 1000)
-);
+const TODAY = moment();
+const ONE_YEAR_AGO = moment().subtract(1, "year");
 
 const BUCKET_TYPES = [
   {
-    id: "1",
+    id: 1,
     label: "1d",
     value: "1d",
   },
   {
-    id: "2",
+    id: 2,
     label: "1w",
     value: "1w",
   },
   {
-    id: "3",
+    id: 3,
     label: "1m",
     value: "1m",
   },
 ];
 
 export default function App() {
-  const [fromDate, setFromDate] = useState(ONE_YEAR_AGO);
-  const [toDate, setToDate] = useState(TODAY);
+  const [fromDate, setFromDate] = useState<Moment>(ONE_YEAR_AGO);
+  const [toDate, setToDate] = useState<Moment>(TODAY);
   const [bucketType, setBucketType] = useState(BUCKET_TYPES[1].id);
 
   const [data, setData] = useState<BucketData[] | undefined>(
@@ -105,17 +104,17 @@ export default function App() {
   useEffect(() => {}, [fromDate]);
 
   const handleChangeFromDate = useCallback(
-    (_, date) => {
-      const dateFormat = formatDate(date);
-      setFromDate(dateFormat);
+    (_, date: Date) => {
+      const dateMoment = moment(date);
+      setFromDate(dateMoment);
     },
     [setFromDate]
   );
 
   const handleChangeToDate = useCallback(
-    (_, date) => {
-      const dateFormat = formatDate(date);
-      setToDate(dateFormat);
+    (_, date: Date) => {
+      const dateMoment = moment(date);
+      setToDate(dateMoment);
     },
     [setToDate]
   );
@@ -125,13 +124,13 @@ export default function App() {
   }, [fetchData]);
 
   const handlePressBucketType = useCallback(
-    (bucketType) => {
+    (bucketType: number) => {
       setBucketType(bucketType);
     },
     [setBucketType]
   );
-  const fromDateObj = new Date(fromDate);
-  const toDateObj = new Date(toDate);
+  const fromDateObj = fromDate.toDate();
+  const toDateObj = toDate.toDate();
 
   // if (error) return null;
   return (

@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment, { Moment } from "moment";
 import { buildBucketsArray } from "./buildBuckets";
 
 const GITHUB_TOKEN =
@@ -26,17 +26,14 @@ export const weeksInYear = (year: number) =>
   moment().year(year).isoWeeksInYear();
 
 export const buildRangeBuckets = (
-  from: string,
-  to: string,
-  bucketType: string
+  fromDate: Moment,
+  toDate: Moment,
+  bucketType: number
 ): Bucket[] => {
-  const fromDate = new Date(from);
-  const toDate = new Date(to);
-
   return buildBucketsArray(
     {
-      fromDate: moment(fromDate),
-      toDate: moment(toDate),
+      fromDate,
+      toDate,
     },
     bucketType
   );
@@ -45,14 +42,14 @@ export const buildRangeBuckets = (
 export const buildBucketFetchURL = ({ from, to }: Bucket) =>
   `https://api.github.com/search/issues?q=repo:apple/swift+is:pr+is:merged%20updated:${from}..${to}`;
 
-const buildBucketLabel = (date: string, bucketType: string) => {
-  if (bucketType === "1") return date;
-  if (bucketType === "2") return moment(date, "YYYY-MM-DD").week().toString();
-  if (bucketType === "3") return moment(date, "YYYY-MM-DD").format("mm");
+const buildBucketLabel = (date: string, bucketType: number) => {
+  if (bucketType === 1) return date;
+  if (bucketType === 2) return moment(date, "YYYY-MM-DD").week().toString();
+  if (bucketType === 3) return moment(date, "YYYY-MM-DD").format("mm");
   return "";
 };
 
-export const fetchBuckets = async (buckets: Bucket[], bucketType: string) => {
+export const fetchBuckets = async (buckets: Bucket[], bucketType: number) => {
   try {
     const urls: string[] = [];
     for (const bucket of buckets) {
@@ -61,31 +58,31 @@ export const fetchBuckets = async (buckets: Bucket[], bucketType: string) => {
 
     console.log("buckets", buckets);
 
-    // const requests = urls.map((url) =>
-    //   fetch(url, {
-    //     method: "GET",
-    //     headers: {
-    //       Accept: "application/vnd.github.v3+json",
-    //       Authorization: GITHUB_TOKEN,
-    //     },
-    //   })
-    // );
-    // const responses = await Promise.all(requests);
+    const requests = urls.map((url) =>
+      fetch(url, {
+        method: "GET",
+        headers: {
+          Accept: "application/vnd.github.v3+json",
+          Authorization: GITHUB_TOKEN,
+        },
+      })
+    );
+    const responses = await Promise.all(requests);
 
-    // const json = responses.map((response) => response.json());
-    // const data = await Promise.all(json);
-    // console.log("data", data);
-    // const bucketsData: BucketData[] = [];
+    const json = responses.map((response) => response.json());
+    const data = await Promise.all(json);
+    console.log("data", data);
+    const bucketsData: BucketData[] = [];
 
-    // let index = 0;
-    // for (const element of data) {
-    //   const fromDate = buckets[index]?.from;
-    //   bucketsData.push({
-    //     value: element.total_count || 0,
-    //     label: buildBucketLabel(fromDate, bucketType),
-    //   });
-    //   index++;
-    // }
+    let index = 0;
+    for (const element of data) {
+      const fromDate = buckets[index]?.from;
+      bucketsData.push({
+        value: element.total_count || 0,
+        label: buildBucketLabel(fromDate, bucketType),
+      });
+      index++;
+    }
     const mock = [
       { from: "2022-10-23", month: 10, to: "2022-10-31", value: 105 },
       { from: "2022-11-01", month: 11, to: "2022-11-30", value: 336 },
@@ -121,8 +118,8 @@ export const fetchBuckets = async (buckets: Bucket[], bucketType: string) => {
     await sleep;
     // console.log("bucketsData", bucketsData);
 
-    // return bucketsData;
-    return mock;
+    return bucketsData;
+    // return mock;
   } catch (error) {
     throw error;
   }

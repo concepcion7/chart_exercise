@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import moment, { Moment } from "moment";
+import dayjs from "dayjs";
 
 import { Bucket, BucketData } from "../utils/types";
 import {
@@ -8,7 +8,7 @@ import {
   ONE_YEAR_AGO,
   TODAY,
 } from "../utils/constants";
-import { buildBucketLabel, buildRangeBuckets } from "../utils/buckets";
+import { buildBucketLabel, buildBuckets } from "../utils/buckets";
 
 const buildBucketFetchURL = ({ from, to }: Bucket) =>
   `https://api.github.com/search/issues?q=repo:apple/swift+is:pr+is:merged%20updated:${from}..${to}`;
@@ -20,30 +20,30 @@ export const fetchBuckets = async (buckets: Bucket[], bucketType: string) => {
       urls.push(buildBucketFetchURL(bucket));
     }
 
-    console.log("urls", urls);
+    // console.log("urls", urls);
 
-    const requests = urls.map((url) =>
-      fetch(url, {
-        method: "GET",
-        headers: {
-          Accept: "application/vnd.github.v3+json",
-          Authorization: GITHUB_TOKEN,
-        },
-      })
-    );
-    const responses = await Promise.all(requests);
+    // const requests = urls.map((url) =>
+    //   fetch(url, {
+    //     method: "GET",
+    //     headers: {
+    //       Accept: "application/vnd.github.v3+json",
+    //       Authorization: GITHUB_TOKEN,
+    //     },
+    //   })
+    // );
+    // const responses = await Promise.all(requests);
 
-    const json = responses.map((response) => response.json());
-    const data = await Promise.all(json);
-    const bucketsData: BucketData[] = [];
+    // const json = responses.map((response) => response.json());
+    // const data = await Promise.all(json);
+    // const bucketsData: BucketData[] = [];
 
-    for (let index = 0; index < data.length; index++) {
-      const fromDate = buckets[index]?.from;
-      bucketsData.push({
-        value: data[index]?.total_count || 0,
-        label: buildBucketLabel(fromDate, bucketType),
-      });
-    }
+    // for (let index = 0; index < data.length; index++) {
+    //   const fromDate = buckets[index]?.from;
+    //   bucketsData.push({
+    //     value: data[index]?.total_count || 0,
+    //     label: buildBucketLabel(fromDate, bucketType),
+    //   });
+    // }
 
     // console.log("bucketsData", bucketsData);
 
@@ -53,7 +53,7 @@ export const fetchBuckets = async (buckets: Bucket[], bucketType: string) => {
 
     // await sleep;
 
-    return bucketsData;
+    return (bucketsData = []);
     // return mock;
   } catch (error) {
     throw error;
@@ -63,7 +63,7 @@ export const fetchBuckets = async (buckets: Bucket[], bucketType: string) => {
 export const useChart = () => {
   const [fromDate, setFromDate] = useState<Moment>(ONE_YEAR_AGO);
   const [toDate, setToDate] = useState<Moment>(TODAY);
-  const [bucketType, setBucketType] = useState<string>(BUCKET_TYPES[2].id);
+  const [bucketType, setBucketType] = useState<string>(BUCKET_TYPES[1].id);
 
   const [data, setData] = useState<BucketData[] | undefined>(
     [] as BucketData[]
@@ -74,8 +74,8 @@ export const useChart = () => {
   const fetchData = useCallback(async () => {
     try {
       setIsLoading(true);
-      const buckets = buildRangeBuckets(fromDate, toDate, bucketType);
-      console.log("buckets", fromDate, toDate);
+      const buckets = buildBuckets(fromDate, toDate, bucketType);
+      //   console.log("buckets", buckets, fromDate, toDate);
 
       const data = await fetchBuckets(buckets, bucketType);
       setIsLoading(false);
@@ -89,7 +89,7 @@ export const useChart = () => {
 
   const handleChangeFromDate = useCallback(
     (_: any, date: Date | undefined) => {
-      const dateMoment = moment(date);
+      const dateMoment = dayjs(date);
       setFromDate(dateMoment);
     },
     [setFromDate]
@@ -97,7 +97,7 @@ export const useChart = () => {
 
   const handleChangeToDate = useCallback(
     (_: any, date: Date | undefined) => {
-      const dateMoment = moment(date);
+      const dateMoment = dayjs(date);
       setToDate(dateMoment);
     },
     [setToDate]

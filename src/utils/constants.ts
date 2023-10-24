@@ -1,11 +1,11 @@
-import moment from "moment";
+import dayjs from "dayjs";
 
 export const GITHUB_TOKEN =
   "Bearer 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";
 
-export const TODAY = moment();
+export const TODAY = dayjs();
 
-export const ONE_YEAR_AGO = moment().subtract(0.5, "year");
+export const ONE_YEAR_AGO = dayjs();
 
 export const BUCKET_TYPES = [
   {

@@ -39,7 +39,6 @@ export const fetchBuckets = async (buckets: Bucket[], bucketType: string) => {
 
     const json = responses.map((response) => response.json());
     const data = await Promise.all(json);
-    console.log("data", data);
     const bucketsData: BucketData[] = [];
 
     for (let index = 0; index < data.length; index++) {

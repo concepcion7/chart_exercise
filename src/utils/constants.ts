@@ -4,7 +4,7 @@ export const GITHUB_TOKEN = null; // FILL TO INCREASE RATE LIMIT
 
 export const TODAY = dayjs();
 
-export const ONE_YEAR_AGO = dayjs(TODAY);
+export const ONE_YEAR_AGO = dayjs(TODAY).subtract(1, "year");
 
 export const BUCKET_TYPES = [
   {

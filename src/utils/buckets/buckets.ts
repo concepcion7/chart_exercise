@@ -1,6 +1,6 @@
 import dayjs, { Dayjs } from "dayjs";
-import { daysInYear, normalizeDate, weeksInYear } from "./date";
-import { DatesData, Bucket } from "./types";
+import { daysInYear, normalizeDate, weeksInYear } from "../date";
+import { DatesData, Bucket } from "../types";
 
 import en from "dayjs/locale/en";
 dayjs.locale({

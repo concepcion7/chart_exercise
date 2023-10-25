@@ -5,8 +5,27 @@ import Spinner from "react-native-loading-spinner-overlay";
 import { RadioGroup } from "react-native-radio-buttons-group";
 
 import { BUCKET_TYPES } from "../utils/constants";
-import { Container, Header, Row, SelectedBucketContainer } from "./styles";
+import {
+  Container,
+  DateRange,
+  Header,
+  MiniDatePickerContainer,
+  Row,
+  SelectedBucketContainer,
+} from "./styles";
 import { useChart } from "./hooks";
+import { MiniDatePickerProps } from "../utils/types";
+
+const MiniDatePicker = ({ label, date, handlePress }: MiniDatePickerProps) => {
+  return (
+    <MiniDatePickerContainer>
+      <Text>
+        {label}: {date.format("YYYY-MM-DD")}
+      </Text>
+      <Button title={`Set ${label} date`} onPress={handlePress} />
+    </MiniDatePickerContainer>
+  );
+};
 
 export default function Main() {
   const {
@@ -16,11 +35,15 @@ export default function Main() {
     bucketType,
     isLoading,
     selectedBucket,
-    handleChangeFromDate,
-    handleChangeToDate,
+    showDatePickerFrom,
+    showDatePickerTo,
+    handleChangeDateFrom,
+    handleChangeDateTo,
     handlePressSearch,
     handlePressBucketType,
     handleSelectBucket,
+    handlePressShowDatePickerFrom,
+    handlePressShowDatePickerTo,
   } = useChart();
   const fromDateObj = fromDate.toDate();
   const toDateObj = toDate.toDate();
@@ -34,18 +57,34 @@ export default function Main() {
       <Container>
         <Spinner visible={isLoading} textContent={"Loading..."} />
         <Header>
-          <>
+          <DateRange>
             <Row>
-              <DateTimePicker
-                value={fromDateObj}
-                onChange={handleChangeFromDate}
-                maximumDate={toDateObj}
-              />
-              <DateTimePicker
-                value={toDateObj}
-                onChange={handleChangeToDate}
-                minimumDate={fromDateObj}
-              />
+              {showDatePickerFrom ? (
+                <DateTimePicker
+                  value={fromDateObj}
+                  onChange={handleChangeDateFrom}
+                  maximumDate={toDateObj}
+                />
+              ) : (
+                <MiniDatePicker
+                  label="from"
+                  date={fromDate}
+                  handlePress={handlePressShowDatePickerFrom}
+                />
+              )}
+              {showDatePickerTo ? (
+                <DateTimePicker
+                  value={toDateObj}
+                  onChange={handleChangeDateTo}
+                  minimumDate={fromDateObj}
+                />
+              ) : (
+                <MiniDatePicker
+                  label="to"
+                  date={toDate}
+                  handlePress={handlePressShowDatePickerTo}
+                />
+              )}
             </Row>
             <Row>
               <RadioGroup
@@ -55,7 +94,7 @@ export default function Main() {
                 layout="row"
               />
             </Row>
-          </>
+          </DateRange>
           <Row>
             <SelectedBucketContainer>
               <Text>Label: {selectedBucket ? selectedBucket.label : " "}</Text>

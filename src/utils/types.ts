@@ -1,16 +1,22 @@
 import { Dayjs } from "dayjs";
 
-export interface DatesData {
+export type DatesData = {
   fromDate: Dayjs;
   toDate: Dayjs;
-}
+};
 
-export interface Bucket {
+export type Bucket = {
   from: string;
   to: string;
-}
+};
 
-export interface BucketData {
+export type BucketData = {
   value: number;
   label: string;
+};
+
+export interface MiniDatePickerProps {
+  label: string;
+  date: Dayjs;
+  handlePress: () => void;
 }

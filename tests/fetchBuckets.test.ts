@@ -1,4 +1,3 @@
-import { buildBucketFetchURLs, fetchBuckets } from "../src/screens/hooks";
 import {
   ONE_YEAR_AGO_1_MONTH,
   ONE_YEAR_AGO_1_MONTH_URLS,
@@ -8,6 +7,7 @@ import {
   TOTAL_VALUE,
 } from "./mocks";
 import { BUCKET_TYPES } from "../src/utils/constants";
+import { buildBucketFetchURLs, fetchBuckets } from "../src/utils/buckets/fetch";
 
 global.fetch = jest.fn((mock) =>
   Promise.resolve({

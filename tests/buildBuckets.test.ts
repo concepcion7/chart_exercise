@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { buildBuckets } from "../src/utils/buckets";
+import { buildBuckets } from "../src/utils/buckets/buckets";
 import { BUCKET_TYPES } from "../src/utils/constants";
 
 import { ONE_YEAR_AGO_1_MONTH } from "./mocks";

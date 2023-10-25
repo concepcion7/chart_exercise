@@ -2,12 +2,12 @@
 // Testing from dates && a bucket type to array with total value
 
 import dayjs from "dayjs";
-import { fetchBuckets } from "../src/screens/hooks";
-import { buildBuckets } from "../src/utils/buckets";
+import { buildBuckets } from "../src/utils/buckets/buckets";
 import { BUCKET_TYPES, ONE_YEAR_AGO, TODAY } from "../src/utils/constants";
 import { TOTAL_VALUE } from "./mocks";
 import { getRandomBetweenNumber } from "./utils";
 import { Bucket, BucketData } from "../src/utils/types";
+import { fetchBuckets } from "../src/utils/buckets/fetch";
 
 global.fetch = jest.fn((mock) =>
   Promise.resolve({

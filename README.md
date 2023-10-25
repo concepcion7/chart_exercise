@@ -1,5 +1,11 @@
 # chart
 
+TECH:
+
+This project is made with expo to focus on resolution.
+When download, executed npm install and then npx expo start.
+
+PRODUCT:
 Product req: "per month for the past 1 year"
 Histogram:
 f(x) = y
@@ -22,3 +28,7 @@ Type of bucket: 1W: Range: 2023-05-06 - 2023-06-08. Buckets: 6.
 IMPORTANT NOTE: you need a OAuth App Token to avoid rate limiting. If you do not use any kind of token you have 10 requests. With PAT, you have 30 requests.
 
 src/utils/constants.ts here you can add your Token to avoid low rate limit -> GITHUB_TOKEN
+
+UI/UX:
+
+![](docs/parts.png)

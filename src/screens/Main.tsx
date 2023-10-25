@@ -105,7 +105,7 @@ export default function Main() {
         </Header>
         <BarChart
           width={dimensions.width}
-          height={dimensions.height - 300}
+          height={dimensions.height - 250}
           data={data}
           spacing={0}
           initialSpacing={15}

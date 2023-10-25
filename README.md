@@ -29,10 +29,12 @@ IMPORTANT NOTE: you need a OAuth App Token to avoid rate limiting. If you do not
 
 src/utils/constants.ts here you can add your Token to avoid low rate limit -> GITHUB_TOKEN
 
+Guide: https://docs.github.com/en/enterprise-server@3.6/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
+
 UI/UX:
 
 ![](docs/parts.png)
 
-**NOTES: I ran out of time due to the deadline, you can see how much I worked on this. I would like to do more testing including some datepicker testing with RNTL or maybe an e2e with detox. I would appreciate to talk about this in a posible meeting.**
+**NOTES: I ran out of time due to the deadline (25 oct), it is posible to see when I started, etc (obvious) in the commit history. I would like to do more testing including some datepicker testing with RNTL or maybe an e2e with detox (I had to fix the Android datepicker as fast as I could). I would appreciate to talk about this in a posible meeting.**
 
 Thank u for ur time

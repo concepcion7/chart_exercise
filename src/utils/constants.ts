@@ -1,11 +1,10 @@
 import dayjs from "dayjs";
 
-export const GITHUB_TOKEN =
-  "Bearer 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";
+export const GITHUB_TOKEN = null; // FILL TO INCREASE RATE LIMIT
 
 export const TODAY = dayjs();
 
-export const ONE_YEAR_AGO = dayjs(TODAY).subtract(1, "year");
+export const ONE_YEAR_AGO = dayjs(TODAY);
 
 export const BUCKET_TYPES = [
   {

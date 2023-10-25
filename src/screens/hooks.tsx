@@ -9,8 +9,6 @@ import {
   TODAY,
 } from "../utils/constants";
 import { buildBucketLabel, buildBuckets } from "../utils/buckets";
-import { InteractionManager } from "react-native";
-
 const buildBucketFetchURL = ({ from, to }: Bucket) =>
   `https://api.github.com/search/issues?q=repo:apple/swift+is:pr+is:merged%20updated:${from}..${to}`;
 
@@ -29,7 +27,7 @@ export const fetchBuckets = async (buckets: Bucket[], bucketType: string) => {
       Accept: "application/vnd.github.v3+json",
     };
     if (GITHUB_TOKEN) {
-      headers.Authorization = GITHUB_TOKEN;
+      headers.Authorization = "1234123423";
     }
     const requests = urls.map((url) =>
       fetch(url, {
@@ -41,6 +39,7 @@ export const fetchBuckets = async (buckets: Bucket[], bucketType: string) => {
 
     const json = responses.map((response) => response.json());
     const data = await Promise.all(json);
+    console.log("data", data);
     const bucketsData: BucketData[] = [];
 
     for (let index = 0; index < data.length; index++) {

@@ -16,5 +16,5 @@ export const Row = styled.View`
 
 export const SelectedBucketContainer = styled.View`
   flex-direction: row;
-  column-gap: 25px;
+  column-gap: 10px;
 `;

@@ -35,6 +35,6 @@ UI/UX:
 
 ![](docs/parts.png)
 
-**NOTES: I ran out of time due to the deadline (25 oct), it is posible to see when I started, etc (obvious) in the commit history. I would like to do more testing including some datepicker testing with RNTL or maybe an e2e with detox (I had to fix the Android datepicker as fast as I could). I would appreciate to talk about this in a posible meeting.**
+**NOTES: I ran out of time due to the deadline (25 oct), it is posible to see when I started, etc (obvious) in the commit history. I would really like to do more testing including some datepicker testing with RNTL or maybe an e2e with detox (I had to fix the Android datepicker as fast as I could so I see it 'fragile'). I would appreciate to talk about this in a posible meeting.**
 
 Thank u for ur time

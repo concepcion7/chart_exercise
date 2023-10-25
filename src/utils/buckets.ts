@@ -1,8 +1,7 @@
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { daysInYear, normalizeDate, weeksInYear } from "./date";
 import { DatesData, Bucket } from "./types";
-// const isoWeek = require("dayjs/plugin/isoWeek");
-// dayjs.extend(isoWeek);
+
 import en from "dayjs/locale/en";
 dayjs.locale({
   ...en,
@@ -19,7 +18,7 @@ export const buildDayBucketsArray = ({ fromDate, toDate }: DatesData) => {
   let currentYear = fromDate.year();
   let currentDay = fromDate.dayOfYear();
 
-  const buckets = [];
+  const buckets: Bucket[] = [];
 
   for (let index = 0; index <= numberOfDays; index++) {
     const currentDate = dayjs()
@@ -39,8 +38,6 @@ export const buildDayBucketsArray = ({ fromDate, toDate }: DatesData) => {
     }
   }
 
-  console.log("buckets", buckets);
-
   return buckets;
 };
 
@@ -53,7 +50,7 @@ export const buildWeekBucketsArray = ({ fromDate, toDate }: DatesData) => {
   let currentYear = fromDate.year();
   let currentWeek = fromDate.week();
 
-  const buckets = [];
+  const buckets: Bucket[] = [];
 
   for (let index = 0; index <= numberOfWeeks; index++) {
     const startOfWeek = dayjs()
@@ -61,19 +58,16 @@ export const buildWeekBucketsArray = ({ fromDate, toDate }: DatesData) => {
       .week(currentWeek)
       .startOf("week");
     const endOfWeek = dayjs().year(currentYear).week(currentWeek).endOf("week");
-    console.log("jejeje");
 
     const bucket = {
       from: startOfWeek.format("YYYY-MM-DD"),
       to: endOfWeek.format("YYYY-MM-DD"),
     };
 
-    console.log("bucket", bucket);
     buckets.push(bucket);
 
     currentWeek += 1;
-    console.log("weeksInYear", weeksInYear(currentYear));
-    if (currentWeek === weeksInYear(currentYear) + 1) {
+    if (currentWeek === weeksInYear(currentYear)) {
       currentWeek = 0;
       currentYear += 1;
     }
@@ -91,7 +85,7 @@ export const buildMonthBucketsArray = ({ fromDate, toDate }: DatesData) => {
   let currentYear = fromDate.year();
   let currentMonth = fromDate.month();
 
-  const buckets = [];
+  const buckets: Bucket[] = [];
 
   for (let index = 0; index <= numberOfMonths; index++) {
     const daysOfMonth = dayjs()
@@ -114,15 +108,18 @@ export const buildMonthBucketsArray = ({ fromDate, toDate }: DatesData) => {
       currentYear += 1;
     }
   }
-
   return buckets;
 };
 
-export const buildBuckets = (from, to, bucketType: string): Bucket[] => {
+export const buildBuckets = (
+  from: Dayjs,
+  to: Dayjs,
+  bucketType: string
+): Bucket[] => {
   const fromDate = from;
   const toDate = to;
   let buckets = [] as Bucket[];
-  // if (!fromDate.isValid() || !toDate.isValid()) return buckets;
+  if (!fromDate.isValid() || !toDate.isValid()) return buckets;
   const datesData = { fromDate, toDate };
   if (bucketType === "1") {
     return buildDayBucketsArray(datesData);
@@ -131,12 +128,12 @@ export const buildBuckets = (from, to, bucketType: string): Bucket[] => {
   } else if (bucketType === "3") {
     return buildMonthBucketsArray(datesData);
   }
-  return [] as Bucket[];
+  return buckets;
 };
 
 export const buildBucketLabel = (date: string, bucketType: string) => {
   if (bucketType === "1") return date;
-  if (bucketType === "2") return dayjs(date, "YYYY-MM-DD").toString();
+  if (bucketType === "2") return dayjs(date, "YYYY-MM-DD").week().toString();
   if (bucketType === "3") return dayjs(date, "YYYY-MM-DD").format("MMM");
   return "";
 };

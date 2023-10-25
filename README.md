@@ -7,7 +7,7 @@
     f(x): total pr updated that in that moment of time
 
 
-    Because the api limits and truncates the result to elements that fit into 100kb and since I only need the total_count in each request.
+    Because the api limits and truncates the result and since I only need the total_count in each request.
     I will do N requests. One request = one bucket (one minimum division of the date range)
     In the base case they will be 13 requests. Division: month. Range (from-to): 1 Year. 13 months in 1 year including the same month in both years.
 

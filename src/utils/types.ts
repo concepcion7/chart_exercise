@@ -1,15 +1,13 @@
-import { Moment } from "moment";
+import { Dayjs } from "dayjs";
 
 export interface DatesData {
-  fromDate: Moment;
-  toDate: Moment;
+  fromDate: Dayjs;
+  toDate: Dayjs;
 }
 
 export interface Bucket {
   from: string;
   to: string;
-  month?: number;
-  //   year?: number;
 }
 
 export interface BucketData {

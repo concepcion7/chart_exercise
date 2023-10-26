@@ -3,7 +3,7 @@
 TECH:
 
 This project is made with expo to focus on resolution.
-When download, executed npm install and then npx expo start.
+When download, execute npm install and then npx expo start.
 
 PRODUCT:
 Product req: "per month for the past 1 year"
